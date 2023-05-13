@@ -10,21 +10,21 @@ namespace ConnexionTable
 {
     public partial class Form1 : Form
     {
-       private MySqlConnection conn;
-        private string server = "localhost";
+       private MySqlConnection conn;  //informations de connexion a la base de données
+        private string server = "172.16.0.9";
         private string database = "bdd_sn";
-        private string user = "root";
-        private string password = "";
-        private string salt = "pepper"; // Chaines de caractères pour connection a la base de sonnées
+        private string user = "User1";
+        private string password = "Prevert-77";
+        private string salt = "pepper"; 
 
         public Form1()
         {
             InitializeComponent(); //initialisation des composants
-            PasswordTextbox.PasswordChar = '*';// cache caractères
+            PasswordTextbox.PasswordChar = '*';// cache des caractères pour le champ des mots de passe
             conn = new MySqlConnection($"Server={server};Database={database};User={user};Pwd={password};"); //création de la connection avec requette sql
         }
 
-        private void ShowPasswordCheckbox_CheckedChanged(object sender, EventArgs e)// Evenement si case cochée
+        private void ShowPasswordCheckbox_CheckedChanged(object sender, EventArgs e)// affichage du mot de passe si case cochée
         {
             if (ShowPasswordCheckbox.Checked)
             {
@@ -36,9 +36,9 @@ namespace ConnexionTable
             }
         }
 
-        private void ConnexionButton_Click(object sender, EventArgs e)
+        private void ConnexionButton_Click(object sender, EventArgs e) //Si bouton connexion cliqué :
         {
-            string mdp = PasswordTextbox.Text + salt; //cryptage 
+            string mdp = PasswordTextbox.Text + salt; // décryptage et désallage du mot de passe
             using (SHA1Managed sha1 = new SHA1Managed())
             {
                 var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(mdp));
@@ -57,12 +57,11 @@ namespace ConnexionTable
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 DataTable dataTable = new DataTable(); //création de table pour test de connection
                 adapter.Fill(dataTable); //test de la table
-                if (dataTable.Rows.Count == 1) // Si une colone dans la table
+                if (dataTable.Rows.Count == 1) // Si il y as une colone dans la table
                 {
                     Form2 form2 = new Form2(); //ouverture du fomrs 2
                     form2.Show();
                     this.Hide(); //cacher forms 1
-                    //MessageBox.Show("Vous êtes connecté.");
                 }
                 else
                 {
@@ -71,7 +70,7 @@ namespace ConnexionTable
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur : {ex.Message}"); //en cas d'erreur de la base de donnée
+                MessageBox.Show($"Erreur de connection a la base de données. Merci de contacter le support : {ex.Message}"); //en cas d'erreur de la base de donnée
             }
             finally // fermeture de la connection
             {
